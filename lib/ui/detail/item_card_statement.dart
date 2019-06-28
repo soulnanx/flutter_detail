@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_detalhe/ui/detail/item_card.dart';
+import 'item_card_statement_spend.dart';
+import 'package:flutter_detalhe/data/spend.dart';
 
-class ItemCardStatement extends StatefulWidget {
-  @override
-  _ItemCardStatementState createState() => _ItemCardStatementState();
-}
+class ItemCardStatement extends StatelessWidget {
+  List<Spend> _spendingList;
 
-class _ItemCardStatementState extends State<ItemCardStatement>
-    with SingleTickerProviderStateMixin{
+  List<ItemCardStatementSpend> loadCardSpending(){
+    return _spendingList.map( (spend) =>
+        ItemCardStatementSpend(spend.value, spend.placeName, spend.placeAddress)
+    ).toList();
+  }
+
   TextStyle style = TextStyle(color: Colors.black12, fontSize: 14);
   final List<Tab> myTabs = <Tab>[
     Tab(text: "7 DIAS"),
@@ -14,33 +19,24 @@ class _ItemCardStatementState extends State<ItemCardStatement>
     Tab(text: "30 DIAS")
   ];
 
-
-  @override
-  void initState() {
-    super.initState();//    _tabController = TabController(vsync: this, length: myTabs.length);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  ItemCardStatement(this._spendingList);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Text(
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: Text(
                 "EXTRATO",
                 style: TextStyle(
                   color: Colors.black54,
                   fontSize: 16,
                 ),
               )
-            ],
           ),
           DefaultTabController(
             length: 3,
@@ -48,23 +44,20 @@ class _ItemCardStatementState extends State<ItemCardStatement>
               children: <Widget>[
                 Container(
                   constraints: BoxConstraints.expand(height: 50),
-                  child: TabBar(
-                      labelColor: Colors.black54,
-                      tabs: [
-                    Tab(text: "Homffe"),
-                    Tab(text: "Articles"),
-                    Tab(text: "User"),
-                  ]),
+                  child: TabBar(labelColor: Colors.black54, tabs: myTabs),
                 ),
                 Container(
-                  height: 400,
+                  height: 250,
                   child: Container(
                     child: TabBarView(children: [
                       Container(
-                        child: Text("Home Bodhhy"),
+                        child:
+                        ItemCard(".... 1234", "TKK", "25/06/2019", "30,00"),
                       ),
-                      Container(
-                        child: Text("Articles Body"),
+                      SingleChildScrollView(
+                        child:  Column(
+                          children: loadCardSpending(),
+                        ),
                       ),
                       Container(
                         child: Text("User Body"),
@@ -78,5 +71,5 @@ class _ItemCardStatementState extends State<ItemCardStatement>
         ],
       ),
     );
-  }
+}
 }
