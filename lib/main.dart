@@ -4,8 +4,8 @@ import 'package:flutter_detalhe/ui/tabTest.dart';
 
 void main() => runApp(MaterialApp(
       title: 'Detalhe',
-//      home: WelcomeScreen(),
-      home: SliverWithTabBar(),
+      home: WelcomeScreen(),
+//      home: SliverWithTabBar(),
     ));
 
 
