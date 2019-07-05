@@ -1,9 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:async';
-import 'dart:convert';
 
 const request = "https://api.hgbrasil.com/finance";
 
@@ -13,7 +13,6 @@ class Converter extends StatefulWidget {
 }
 
 class _ConverterState extends State<Converter> {
-
   final realController = TextEditingController();
   final dolarController = TextEditingController();
   final euroController = TextEditingController();
@@ -21,22 +20,22 @@ class _ConverterState extends State<Converter> {
   double dolar;
   double euro;
 
-  void _realChanged(String text){
+  void _realChanged(String text) {
     double real = double.parse(text);
-    dolarController.text = (real/dolar).toStringAsFixed(2);
-    euroController.text = (real/euro).toStringAsFixed(2);
+    dolarController.text = (real / dolar).toStringAsFixed(2);
+    euroController.text = (real / euro).toStringAsFixed(2);
   }
 
-  void _dolarChanged(String text){
+  void _dolarChanged(String text) {
     double dolar = double.parse(text);
-    realController.text = (dolar*this.dolar).toStringAsFixed(2);
-    euroController.text = (dolar*this.dolar / this.euro).toStringAsFixed(2);
+    realController.text = (dolar * this.dolar).toStringAsFixed(2);
+    euroController.text = (dolar * this.dolar / this.euro).toStringAsFixed(2);
   }
 
-  void _euroChanged(String text){
+  void _euroChanged(String text) {
     double euro = double.parse(text);
-    realController.text = (euro*this.euro).toStringAsFixed(2);
-    euroController.text = (euro*this.euro / this.euro).toStringAsFixed(2);
+    realController.text = (euro * this.euro).toStringAsFixed(2);
+    euroController.text = (euro * this.euro / this.euro).toStringAsFixed(2);
   }
 
   Future<Map> getValues() async {
@@ -53,51 +52,45 @@ class _ConverterState extends State<Converter> {
         backgroundColor: Colors.amber,
       ),
       backgroundColor: Colors.white,
-      body: FutureBuilder(
-          future: getValues(),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-              case ConnectionState.waiting:
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-                break;
-              default:
-                if (snapshot.hasError)
-                  return Center(child: Text("Erro"));
-                else
-                  dolar = snapshot.data["results"]["currencies"]["USD"]
-                          ["buy"];
-                  euro = snapshot.data["results"]["currencies"]["EUR"]
-                        ["buy"];
-                return SingleChildScrollView(
-                    child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Icon(Icons.monetization_on,
-                          size: 150, color: Colors.amber),
-                      buildTextField("Reais", "R\$", realController, _realChanged),
-                      Divider(),
-                      buildTextField("Dolares", "U\$", dolarController, _dolarChanged),
-                      Divider(),
-                      buildTextField("Euros", "E", euroController, _euroChanged),
-                    ],
-                  ),
-                ));
-            }
-          }),
+      body: FutureBuilder(future: getValues(), builder: _onGetValues),
     );
+  }
+
+  Widget _onGetValues(context, snapshot) {
+    switch (snapshot.connectionState) {
+      case ConnectionState.none:
+      case ConnectionState.waiting:
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+        break;
+      default:
+        if (snapshot.hasError)
+          return Center(child: Text("Erro"));
+        else
+          dolar = snapshot.data["results"]["currencies"]["USD"]["buy"];
+          euro = snapshot.data["results"]["currencies"]["EUR"]["buy"];
+        return SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Icon(Icons.monetization_on, size: 150, color: Colors.amber),
+                  buildTextField("Reais", "R\$", realController, _realChanged),
+                  Divider(),
+                  buildTextField("Dolares", "U\$", dolarController, _dolarChanged),
+                  Divider(),
+                  buildTextField("Euros", "E", euroController, _euroChanged),
+                ],
+              ),
+            ));
+    }
   }
 }
 
-Widget buildTextField(String label,
-    String prefix,
-    TextEditingController controller,
-    Function func){
-
+Widget buildTextField(String label, String prefix,
+    TextEditingController controller, Function func) {
   return TextField(
     controller: controller,
     onChanged: func,

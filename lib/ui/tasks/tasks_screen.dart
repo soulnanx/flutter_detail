@@ -53,6 +53,20 @@ class _TasksScreenState extends State<TasksScreen> {
     });
   }
 
+  Future<Null> _onRefresh() async{
+    await Future.delayed(Duration(seconds: 1));
+    setState(() {
+      _toDoList.sort( (itemA, itemB)  {
+        if (itemA["ok"] && !itemB["ok"]) return 1;
+        else if (!itemA["ok"] && itemB["ok"]) return -1;
+        else return 0;
+      });
+
+      _saveData();
+    });
+
+  }
+
   void _dismissTask(context, index) {
     setState(() {
       _lastTaskRemoved = Map.from(_toDoList[index]);
@@ -62,12 +76,10 @@ class _TasksScreenState extends State<TasksScreen> {
 
       final snack = SnackBar(
         content: Text("Tarefa \"${_lastTaskRemoved["title"]}\" foi removida!"),
-        action: SnackBarAction(
-            label: "Desfazer",
-            onPressed: _undoDelete),
+        action: SnackBarAction(label: "Desfazer", onPressed: _undoDelete),
         duration: Duration(seconds: 2),
       );
-
+      Scaffold.of(context).removeCurrentSnackBar();
       Scaffold.of(context).showSnackBar(snack);
     });
   }
@@ -104,12 +116,13 @@ class _TasksScreenState extends State<TasksScreen> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.only(top: 16),
-                itemBuilder: _buildTasks,
-                itemCount: _toDoList.length,
-              ),
-            )
+                child: RefreshIndicator(
+                    child: ListView.builder(
+                      padding: EdgeInsets.only(top: 16),
+                      itemBuilder: _buildTasks,
+                      itemCount: _toDoList.length,
+                    ),
+                    onRefresh: _onRefresh)),
           ],
         ),
       ),
@@ -136,7 +149,6 @@ class _TasksScreenState extends State<TasksScreen> {
         title: Text(_toDoList[index]["title"]),
       ),
       onDismissed: (direction) => _dismissTask(context, index),
-
     );
   }
 
