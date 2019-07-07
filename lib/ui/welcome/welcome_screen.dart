@@ -3,6 +3,7 @@ import 'package:flutter_detalhe/ui/detail/detail_screen.dart';
 import 'package:flutter_detalhe/ui/converter/converter.dart';
 import 'package:flutter_detalhe/ui/tasks/tasks_screen.dart';
 import 'package:flutter_detalhe/ui/gifs/gifsAndGrid.dart';
+import 'package:flutter_detalhe/ui/meta/meta_screen.dart';
 
 import 'package:flutter_detalhe/ui/repo/repos.dart';
 
@@ -60,6 +61,16 @@ class WelcomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) =>
                     GifsAndGridScreen()
+                ));
+              },
+            ),
+            RaisedButton(
+              color: Colors.blue,
+              textColor: Colors.white,
+              child: Text("Meta"),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                    MetaScreen()
                 ));
               },
             )
